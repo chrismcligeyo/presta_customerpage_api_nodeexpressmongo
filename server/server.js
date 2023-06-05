@@ -71,6 +71,18 @@ app.post('/customerlists', (req, res) => {
 
 });
 
+app.get('/customerlists', (req, res) => {
+  CustomerList.find().then((clists) => {
+	  //res.send((clists); //was like this, but this sends (clists as an array,collection of clist objects.
+	  //above is not flexible.
+	  //we use like below to send an object, this is flexible, the object can contain (clists arrays plus other info like custom status code,etc
+	 //eg res.send({todos, code: "123"});
+	res.send({clists});
+  }).catch((e)=>{
+    res.status(400).send(e);
+  });
+});
+
   app.listen(3000, ()=>{
     console.log("started on port 3000");
   });
