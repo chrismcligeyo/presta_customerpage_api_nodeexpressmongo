@@ -45,18 +45,32 @@ var bodyParser = require("body-parser");
 var {mongoose} = require("./db/moongose.js");
 var {CustomerList} = require("./models/customerlist.js");
 
+var app = express();
+app.use(bodyParser.json());//allows you to pass json data from client(postman etc) converts to object so that you can see it as object in terminal
 
-
+app.post('/customerlists', (req, res) => {
+	//console.log(req.body)// on postman go to body then raw, then set type as application/js0n and enter data as json,
+	//body parser converts json data entered in postman to object that can be viewed from terminal as object
+ 
   var customerList = new CustomerList({
-    name: "john kamau",
-    phone_number: "+254794830933",
-    branch: "HQ",
-    sales_rep:"ryan muraya",
-    approved: "yes",
-    loan: 23123123
+    name: req.body.name,
+    phone_number: req.body.phone_number,
+    branch: req.body.branch,
+    sales_rep: req.body.sales_rep,
+    approved: req.body.approved,
+    loan: req.body.loan,
 
   });
 
   customerList.save().then((clist) => {
+    res.send(clist);
     console.log("saved customerlist:", clist);
+  }).catch((e)=>{
+    res.status(400).send(e);
+  });
+
+});
+
+  app.listen(3000, ()=>{
+    console.log("started on port 3000");
   });
