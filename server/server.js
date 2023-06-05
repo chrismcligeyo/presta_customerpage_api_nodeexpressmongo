@@ -40,6 +40,9 @@
 
 var express = require("express");
 var bodyParser = require("body-parser");
+// var ObjectID = require('mongodb').ObjectID;
+var {ObjectID} = require("mongodb");
+const _ = require('lodash');
 
 
 var {mongoose} = require("./db/moongose.js");
@@ -48,6 +51,8 @@ var {CustomerList} = require("./models/customerlist.js");
 var app = express();
 app.use(bodyParser.json());//allows you to pass json data from client(postman etc) converts to object so that you can see it as object in terminal
 
+
+// POST LIST
 app.post('/customerlists', (req, res) => {
 	//console.log(req.body)// on postman go to body then raw, then set type as application/js0n and enter data as json,
 	//body parser converts json data entered in postman to object that can be viewed from terminal as object
@@ -71,6 +76,8 @@ app.post('/customerlists', (req, res) => {
 
 });
 
+
+// GET LIST
 app.get('/customerlists', (req, res) => {
   CustomerList.find().then((clists) => {
 	  //res.send((clists); //was like this, but this sends (clists as an array,collection of clist objects.
@@ -82,6 +89,49 @@ app.get('/customerlists', (req, res) => {
     res.status(400).send(e);
   });
 });
+
+// GET Single Customer by id 
+app.get('/customerlists/:id', (req, res) => {
+  var id = req.params.id;
+console.log(id);
+//Cannot read property 'isValid' of undefined error with below, willsort
+  // if (!ObjectID.isValid(id)) {
+  //   return res.status(404).send();
+  // }
+
+  CustomerList.findById(id).then((clist) => {
+    if (!clist) {
+      return res.status(404).send();
+    }
+
+    res.send({clist});
+  }).catch((e) => {
+    res.status(400).send();
+  });
+});
+
+//update
+app.patch('/customerlists/:id', (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ["name", "phone_number", "branch", "sales_rep", "approved", "loan",]);
+console.log(req.body);
+  // if (!ObjectID.isValid(id)) {
+  //   return res.status(404).send();
+  // }
+
+
+  CustomerList.findByIdAndUpdate(id, {$set: body}, {new: true}).then((clist) => {
+    if (!clist) {
+      return res.status(404).send();
+    }
+
+    res.send({clist});
+  }).catch((e) => {
+    res.status(400).send();
+  })
+});
+
+
 
   app.listen(3000, ()=>{
     console.log("started on port 3000");
