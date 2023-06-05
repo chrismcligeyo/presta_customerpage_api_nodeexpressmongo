@@ -53,7 +53,7 @@ app.use(bodyParser.json());//allows you to pass json data from client(postman et
 
 
 // POST LIST
-app.post('/customerlists', (req, res) => {
+app.post('/api/customerlists', (req, res) => {
 	//console.log(req.body)// on postman go to body then raw, then set type as application/js0n and enter data as json,
 	//body parser converts json data entered in postman to object that can be viewed from terminal as object
  
@@ -78,7 +78,7 @@ app.post('/customerlists', (req, res) => {
 
 
 // GET LIST
-app.get('/customerlists', (req, res) => {
+app.get('/api/customerlists', (req, res) => {
   CustomerList.find().then((clists) => {
 	  //res.send((clists); //was like this, but this sends (clists as an array,collection of clist objects.
 	  //above is not flexible.
@@ -91,7 +91,7 @@ app.get('/customerlists', (req, res) => {
 });
 
 // GET Single Customer by id 
-app.get('/customerlists/:id', (req, res) => {
+app.get('/api/customerlists/:id', (req, res) => {
   var id = req.params.id;
 console.log(id);
 //Cannot read property 'isValid' of undefined error with below, willsort
@@ -111,7 +111,7 @@ console.log(id);
 });
 
 //update
-app.patch('/customerlists/:id', (req, res) => {
+app.patch('/api/customerlists/:id', (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ["name", "phone_number", "branch", "sales_rep", "approved", "loan",]);
 console.log(req.body);
